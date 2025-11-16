@@ -272,9 +272,10 @@ async function getOAuthToken(
 ): Promise<string> {
   const fetchFn = customFetch || fetch;
   const tokenUrl = `${serviceKey.url}/oauth/token`;
-  const credentials = Buffer.from(
-    `${serviceKey.clientid}:${serviceKey.clientsecret}`,
-  ).toString("base64");
+  // Use btoa for browser compatibility instead of Buffer
+  const credentials = typeof Buffer !== 'undefined'
+    ? Buffer.from(`${serviceKey.clientid}:${serviceKey.clientsecret}`).toString("base64")
+    : btoa(`${serviceKey.clientid}:${serviceKey.clientsecret}`);
 
   const response = await fetchFn(tokenUrl, {
     method: "POST",
